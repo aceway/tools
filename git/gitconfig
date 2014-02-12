@@ -1,0 +1,16 @@
+[user]
+    name = aceway
+    email = aceway@doogga.com
+[core]
+    editor = vim
+    pager  = less
+[color]
+    diff = auto
+    status = auto
+    branch = auto
+    interactive = auto
+    pager = true
+    ui = auto
+[alias]
+    hist = log --graph --online --decorate
+    st = status

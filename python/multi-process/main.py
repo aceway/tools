@@ -9,6 +9,7 @@
 import sys, os, time
 from framework import run
 
+@profile
 def main(root_path=None):
     if not os.path.isdir(root_path): os.makedirs(root_path)
     if not root_path.strip().endswith("/"): root_path = root_path.strip() + "/"

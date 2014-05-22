@@ -1,0 +1,68 @@
+#!/bin/bash
+
+#func desc:备份数据库到指定目录
+#参数1：备份数据保存到本地的路径
+#参数2：数据库名
+#参数3：备份文件名称的后缀
+#参数4：数据库账户
+#参数5：数据库密码
+function bak_the_database()          
+{
+    bak_path=$1
+    db=$2
+    suffix=$3
+    sql_host=$4
+    sql_user=$5
+    sql_pwd=$6
+    if [ "/" != ${bak_path: -1} ];then
+    ┊   bak_path="${bak_path}/" 
+    fi
+    bak_file="${bak_path}${db}_${suffix}.sql"
+    create_sql="CREATE DATABASE IF NOT EXISTS ${db} DEFAULT CHARSET UTF8;USE ${db};SET NAMES UTF8;"
+    echo ${create_sql} > ${bak_file}
+    mysqldump -h$sql_host -u$sql_user -p$sql_pwd $db >> $bak_file
+    #tar czvf "${bak_file}.tar.gz" $bak_file 
+    #rm -f $bak_file
+    ret_code=$?
+    return $ret_code
+}
+
+#func desc:将本地文件同步到中心服务器
+#参数1：本地数据路径
+#参数2：服务器上数据路径
+#参数3：服务器IP
+#参数4：服务器账户
+#参数5：服务器密码
+function bak_data_to_data_center()          
+{                                            
+    local_data_path=$1
+    center_data_path=$2
+    center_host=$3
+    center_user=$4
+    center_passwd=$5
+    if [ "/" != ${local_data_path: -1} ];then
+        local_data_path="${local_data_path}/" 
+    fi
+    if [ "/" != ${center_data_path: -1} ];then
+        center_data_path="${center_data_path}/"
+    fi
+    the_cmd="sshpass -p ${center_passwd} scp -r -P22 ${local_data_path} ${center_user}@${center_host}:${center_data_path}"
+    #the_cmd="sshpass -p ${center_passwd} rsync -vvz --partial --progress ${local_data_path} ${center_user}@${center_host}:${center_data_path}"
+    #the_cmd="sshpass -p ${center_passwd} rsync -rz --partial ${local_data_path} ${center_user}@${center_host}:${center_data_path}"
+    if [ "$PPID" = "1" ];then  #running in daemon mode
+    ┊   #the_cmd="sshpass -p ${center_passwd} rsync -rz --partial ${local_data_path} ${center_user}@${center_host}:${center_data_path}"
+    fi
+    #echo $the_cmd
+    $the_cmd
+    ret_code=$?
+    return $ret_code
+}
+
+dt=`date +"%Y %m %d %H %M %S"`
+array=($dt)
+year=${array[0]}
+month=${array[1]}
+day=${array[2]}
+hour=${array[3]}
+minute=${array[4]}
+second=${array[5]}

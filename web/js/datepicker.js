@@ -1,3 +1,20 @@
+/*
+css file added:
+.dg-picked-date{
+    background-color:#A00;
+    color:#A00;
+}
+.dg-state-hover{
+    background: #668866;
+    font-weight: bold;
+    color: #cc4455;
+}
+input.the_cmp_date{
+    width:85px;
+    height:15px;
+    margin:0;
+}
+*/
 //func desc:将input设置为日期段选择控件
 //tag_id:input元素的id, 包含#字符
 //from_time, 毫秒

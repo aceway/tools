@@ -1,4 +1,12 @@
 <VirtualHost *:80>
+    Redirect permanent  /  http://www.jfj7788.com/
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName .jfj7788.com
+    Redirect permanent  /  http://www.jfj7788.com/
+</VirtualHost>
+
+<VirtualHost *:80>
     ServerName www.aceway.com
     ServerAlias www.aceway.cn
     ServerAdmin aceway@qq.com
@@ -14,4 +22,22 @@
     ErrorLog ${APACHE_LOG_DIR}/aceway_error.log
     LogLevel warn
     CustomLog ${APACHE_LOG_DIR}/aceway_access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName webcenter.aceway.cn
+    ServerAlias webcenter.aceway.cn
+    ServerAdmin aceway@qq.com
+    DocumentRoot /var/www/
+     
+    WSGIScriptAlias /  /opt/aceway/web-center/webcenter/wsgi.py
+    <Directory /opt/aceway/web-center/webcenter>
+        Options Includes FollowSymLinks Indexes
+        Order allow,deny
+        Allow from 192.168.1.0/24 127.0.0.1
+    </Directory>
+     
+    ErrorLog ${APACHE_LOG_DIR}/webcenter_error.log
+    LogLevel warn
+    CustomLog ${APACHE_LOG_DIR}/webcenter_access.log combined
 </VirtualHost>

@@ -1,7 +1,19 @@
-#!/usr/bin/env python
-# coding=utf-8
-import json as simplejson
-from google.protobuf.internal.containers import RepeatedCompositeFieldContainer, RepeatedScalarFieldContainer
+#!/usr/bin/env python                        
+# -*- coding=utf-8 -*-                       
+########################################################################
+#    File Name: prototools.py                
+#                                            
+#       Author: aceway                       
+#         Mail: aceway@qq.com                
+# Created Time: 2014年08月25日 星期一 21时55分33秒
+#  Description: ...                          
+#                                            
+########################################################################
+import json
+try:                                         
+    from google.protobuf.internal.containers import RepeatedCompositeFieldContainer, RepeatedScalarFieldContainer
+except:                                      
+    print "请为python安装google的protobuf模块"  
 
 def trans_data_from_proto_to_json(protoObj, attrs, jsonObj):
     u'''
@@ -90,7 +102,7 @@ def trans_data_from_dict_to_proto(protoObj, attrsIn, dictObj):
                         trans_data_from_dict_to_proto(getattr(protoObj, pattr), subattr, dictObj.get(pattr, None))
                     elif isinstance(subattr, list) and len(subattr)==1 and isinstance(subattr[0], tuple):
                     #对象repeated
-                        values = simplejson.loads( dictObj.get(pattr) )
+                        values = json.loads( dictObj.get(pattr) )
                         if len(values) > 0 and type(getattr(protoObj, pattr)) == RepeatedCompositeFieldContainer :
                             for value in values:
                                 adder = getattr(protoObj, pattr).add()
@@ -122,7 +134,7 @@ def trans_data_from_dict_to_proto(protoObj, attrsIn, dictObj):
                         #对象内部成员是protobuf对象类型
                             dt = dictObj.get(pattr)
                             if isinstance(dt ,basestring):
-                                values = simplejson.loads( dt )
+                                values = json.loads( dt )
                             else:
                                 values = dt
                             if len(values) > 0 and type(getattr(protoObj, pattr)) == RepeatedCompositeFieldContainer :

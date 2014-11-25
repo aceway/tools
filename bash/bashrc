@@ -1,3 +1,115 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+#shopt -s globstar
+
+# make less more friendly for non-text input files, see lesspipe(1)
+#[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    #alias grep='grep --color=auto'
+    #alias fgrep='fgrep --color=auto'
+    #alias egrep='egrep --color=auto'
+fi
+
+# some more ls aliases
+#alias ll='ls -l'
+#alias la='ls -A'
+#alias l='ls -CF'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+
 # some more ls aliases
 alias ll='ls -l'
 alias lh='ls -hl'
@@ -30,26 +142,74 @@ alias stail='sudo tail '
 alias sll='sudo ls -l '
 alias svim='sudo vim '
 alias svirsh='sudo virsh '
+alias ipy='ipython '
+alias svnlog='svn log|less '
 
 function parse_git_branch {
 git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
-RED="\[\033[0;31m\]"
-GREEN="\[\033[0;32m\]"
-BLUE="\[\033[0;34m\]"
-YELLOW="\[\033[0;33m\]"
-GRAY="\[\033[0;37m\]"
 
-LIGHT_RED="\[\033[1;31m\]"
-LIGHT_YELLOW="\[\033[1;33m\]"
-LIGHT_GREEN="\[\033[1;32m\]"
-LIGHT_BLUE="\[\033[0;34m\]"
-LIGHT_GRAY="\[\033[1;37m\]"
+#\e[30m 将字符的显示颜色改为黑色
+#\e[31m 将字符的显示颜色改为红色
+#\e[32m 将字符的显示颜色改为绿色
+#\e[33m 将字符的显示颜色改为淡红色
+#\e[34m 将字符的显示颜色改为蓝色
+#\e[35m 将字符的显示颜色改为紫色
+#\e[36m 将字符的显示颜色改为淡蓝色
+#\e[37m 将字符的显示颜色改为灰色
+#
+#\e[40m -- \e[47m 设置背景色
+#\e[40m 将背景色设置为黑色
+#\e[41m 将背景色设置为红色
+#\e[42m 将背景色设置为绿色
+#\e[43m 将背景色设置为淡红色
+#\e[44m 将背景色设置为蓝色
+#\e[45m 将背景色设置为紫色
+#\e[46m 将背景色设置为淡蓝色
+#\e[47m 将背景色设置为灰色 
+
+FG_GRAY="\[\033[0;37m\]"
+FG_RED="\[\033[0;31m\]"
+FG_GREEN="\[\033[0;32m\]"
+FG_BLUE="\[\033[0;34m\]"
+FG_YELLOW="\[\033[0;33m\]"
+
+FG_LIGHT_RED="\[\033[1;31m\]"
+FG_LIGHT_YELLOW="\[\033[1;33m\]"
+FG_LIGHT_GREEN="\[\033[1;32m\]"
+FG_LIGHT_BLUE="\[\033[0;34m\]"
+FG_LIGHT_GRAY="\[\033[1;37m\]"
+
+BG_GRAY="\e[47m"    # 将背景色设置为灰色 
+BG_BLACK="\e[40m"   # 将背景色设置为黑色
+BG_RED="\e[41m"    # 将背景色设置为红色 
+BG_GREEN="\e[42m"    # 将背景色设置为红色 
+BG_YELLOW="\e[43m"     # 将背景色设置为淡红色
+BG_BLUE="\e[46m"    # 将背景色设置为淡蓝色
+
+BG_LIGHT_RED="\e[41m"       # 将背景色设置为红色
+BG_LIGHT_GREEN="\e[42m"     # 将背景色设置为绿色
+BG_LIGHT_BLUE="\e[44m"      # 将背景色设置为蓝色
+BG_LIGHT_PINK="\e[45m"      # 将背景色设置为紫色
 
 END="\[\033[0;00m\]"
 
+#\u \h \W：这是一些转义字符，下面详细解释：
+#\d ：代表日期，格式为weekday month date，例如："Mon Aug 1"
+#\H ：完整的主机名称。例如：我的机器名称为：fc4.linux，则这个名称就是fc4.linux
+#\h ：仅取主机的第一个名字，如上例，则为fc4，.linux则被省略
+#\t ：显示时间为24小时格式，如：HH：MM：SS
+#\T ：显示时间为12小时格式
+#\A ：显示时间为24小时格式：HH：MM
+#\u ：当前用户的账号名称
+#\v ：BASH的版本信息
+#\w ：完整的工作目录名称。家目录会以 ~代替
+#\W ：利用basename取得工作目录名称，所以只会列出最后一个目录
+#\# ：下达的第几个命令
+#\$ ：提示字符，如果是root时，提示符为：# ，普通用户则为：$
+#\n ：新建一行
+
 ip=`/sbin/ifconfig eth0|grep -w 'inet'|grep  -v '127.0.0.1'|tail -1|awk '{print $2}'|cut -d":" -f2`
-export PS1="$GRAY[\t]$LIGHT_RED[\u$LIGHT_GRAY@$LIGHT_RED$ip]$LIGHT_YELLOW[\h]$LIGHT_BLUE[\W]$YELLOW\$(parse_git_branch)$LIGHT_GRAY\$"
+export PS1="\n${BG_GREEN}    ${END}$FG_GRAY[\t]$FG_LIGHT_RED[\u$FG_LIGHT_GRAY@$FG_LIGHT_RED$ip($FG_LIGHT_YELLOW\h$FG_LIGHT_RED)]$FG_GRAY[\w]$FG_YELLOW\$(parse_git_branch)$FG_LIGHT_GRAY\n\$ "
 
 export EDITOR=vim
-

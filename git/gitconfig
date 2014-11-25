@@ -1,16 +1,34 @@
-[user]
-    name = aceway
-    email = aceway@qq.com
-[core]
-    editor = vim
+[user]  
+    name = aceway  
+    email = aceway@qq.com  
+[branch]  
+    autosetuprebase = always  
+[push]  
+    default = tracking  
+[core]  
+    editor = vim  
     pager  = less
-[color]
+[color]  
     diff = auto
-    status = auto
-    branch = auto
+    status = auto  
+    branch = auto  
     interactive = auto
-    pager = true
-    ui = auto
-[alias]
+    pager = true  
+    ui = true  
+[color "branch"]  
+    current = yellow reverse  
+    local = yellow  
+    remote = green  
+[color "diff"]  
+    meta = yellow bold  
+    frag = magenta bold  
+    old = red bold  
+    new = green bold  
+[color "status"]  
+    added = yellow  
+    changed = green  
+    untracked = cyan  
+[alias]  
+    lg = log --color --graph --pretty
     hist = log --graph --online --decorate
     st = status

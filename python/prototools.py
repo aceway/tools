@@ -60,14 +60,15 @@ def trans_data_from_dict_to_proto(protoObj, attrsIn, dictObj):
         - protoObj: protobuf对象，从dictObj中解析出的数据将被打包进该对象；
         - attrsIn: 必须是一个tuple, 内部为protoObj的属性名称罗列, []表示内部属性repeated, {k:v}内表示嵌套，
             - string,int,long,float,bool类型的repeat, 在attr名字前分别加s,i,l,f,b表示,其value用逗号分割
-            - ('name', )
-            - ('msg_id', 'errcode')
-            - (['stask_ids'], )  #task_ids前的s表示 string
-            - ( [{'suser_ids'}], )
-            - ([{ 'prises':( 'prise_name', [{'data': ('time', 'count') }] ) }], )
-            - ( [{'roles':('uid',  'reg_time', 'channel_id', 'server_id', 'name', 'role_type', 'lv', 'last_login_tm') }], )
+            - Example:
+                - ('name', )
+                - ('msg_id', 'errcode')
+                - (['stask_ids'], )  #task_ids前的s表示 string
+                - ( [{'suser_ids'}], )
+                - ([{ 'prises':( 'prise_name', [{'data': ('time', 'count') }] ) }], )
+                - ( [{'roles':('uid',  'reg_time', 'channel_id', 'server_id', 'name', 'role_type', 'lv', 'last_login_tm') }], )
             - 注：RepeatedScalarFieldContainer 类型未找到动态获取对象的基础类型，故类型信息放在对应字段名的第一个字符，配置时需要注意
-        - dictObj: 字典，存储请求的条件信息，将被pack进protoObj，可用request.GET，requst.POST
+        - dictObj: 字典，存储请求的条件信息，将被pack进protoObj，可直接用request.GET，requst.POST作为该参数
 
     - Returns:
         - 构造出的proto对象
@@ -75,7 +76,7 @@ def trans_data_from_dict_to_proto(protoObj, attrsIn, dictObj):
     if isinstance(attrsIn, tuple):
         for attr in attrsIn:
             if isinstance(attr, basestring) and len(attr)>0 and hasattr(protoObj, attr):
-            #直接基础类型数据
+            #直接基础类型数据(char,int,long...)对象
                 v = dictObj.get(attr, None)
                 if v is not None:
                     attr_type = type( getattr(protoObj, attr) )
@@ -97,7 +98,7 @@ def trans_data_from_dict_to_proto(protoObj, attrsIn, dictObj):
                 else:
                     pass#配置格式错误
             elif isinstance(attr, list) and len(attr) == 1: #and hasattr(protoObj, attr[0]):
-            #repeated一个基础类型/protobuf对象
+            #repeated类型
                 if isinstance(attr[0], basestring) and len(attr[0]) > 1 and hasattr(protoObj, attr[0][1:]):
                 #被repeated的是基础类型(char,int,long...)对象
                     #RepeatedScalarFieldContainer 数据类型的获取方式？  #暂时用hack方式在v的值上实现s,i,l,f,b分贝表示string,int,long,float,bool类型

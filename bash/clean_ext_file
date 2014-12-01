@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+function delete_the_file()
+{
+    the_file=$1
+    the_ext=$2
+    ext=${the_file##*.}
+    if [ "$the_ext" = "${ext}" ];then
+        rm -f $the_file
+        if [ $? ];then
+            echo "remove OK:" $the_file
+        else
+            echo "remove FAILED:" $the_file
+        fi
+    fi
+}
+
+function the_clean_ext_file()
+{
+    the_ext=$1
+    for d in `ls .`;do
+        if [ -L "$d" ];then
+            echo "Escape link dir ${d} in: " ${cur_dir}
+        else
+            if [ -d "$d" ];then
+                pushd "$PWD" 1>/dev/null
+                cd $d
+                the_clean_ext_file $the_ext
+                popd 1>/dev/null
+            else
+                if [ -f "$d" ];then
+                    delete_the_file $d $the_ext
+                fi
+            fi
+        fi
+    done
+}
+
+if [ "$#" = "1" ];then
+    the_clean_ext_file $1
+else
+    pname=`basename $0`
+    echo -e "Usage:\n\t${pname} file_ext_name"
+fi

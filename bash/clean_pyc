@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+function delete_the_file()
+{
+    the_file=$1
+    the_ext=$2
+    ext=${the_file##*.}
+    if [ "$the_ext" = "${ext}" ];then
+        rm $the_file
+        if [ $? ];then
+            echo "remove OK:" $the_file
+        else
+            echo "remove FAILED:" $the_file
+        fi
+    fi
+}
+
+function clean_pyc_file()
+{
+    for d in `ls .`;do
+        if [ -d "$d" ];then
+            pushd "$PWD" 1>/dev/null
+            cd $d
+            clean_pyc_file
+            popd 1>/dev/null
+        else
+            if [ -f "$d" ];then
+                delete_the_file $d "pyc"
+            fi
+        fi
+    done
+}
+
+clean_pyc_file

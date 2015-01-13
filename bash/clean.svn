@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+function the_clean_svn_dirs()
+{
+    for d in `ls -a .`;do
+        cur_dir=`pwd`
+        #echo "current dir: " ${cur_dir}
+        if [ -d "$d" ];then
+            if [ -L "$d" ];then
+                echo "Escape link dir ${d} in: " ${cur_dir}
+            else
+                if [ "$d" = ".svn" ];then
+                    #echo "Remove ${d} from " ${cur_dir}
+                    rm -rf $d
+                elif [ "$d" != "." ] && [ "$d" != ".." ] && [ "$d" != ".svn" ];then
+                    pushd "$PWD" 1>/dev/null
+                    cd $d
+                    the_clean_svn_dirs
+                    popd 1>/dev/null
+                fi
+            fi
+        fi
+    done
+}
+
+if [ "$#" = "0" ];then
+    the_clean_svn_dirs
+else
+    pname=`basename $0`
+    echo -e "Usage:\n\t${pname}"
+fi

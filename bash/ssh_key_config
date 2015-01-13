@@ -1,0 +1,17 @@
+Host s225
+    HostName 192.168.1.1
+    User aceway
+    Port 19806
+    CheckHostIP no
+    Compression yes
+    ForwardAgent yes
+    IdentityFile ~/.ssh/project_a_rsa
+
+Host s237
+    HostName 10.1.1.1
+    User aceway
+    Port 20141
+    CheckHostIP no
+    Compression yes
+    ForwardAgent yes
+    IdentityFile ~/.ssh/project_b_rsa

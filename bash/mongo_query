@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+clear
+db="DB_PROJECT_A"
+authdb="admin"
+host="10.1.1.1"
+port=27017
+user="root"
+passwd='xxxxxx'
+charset='--default-character-set=utf8'
+mongo --host $host --port ${port} -u ${user} -p ${passwd} --authenticationDatabase ${authdb} ${db}

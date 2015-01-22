@@ -74,7 +74,7 @@ function remote_distribute()
     pname="$4"
     remote_file="${remote_path}/${pname}/bin/lib*.so"
     dist_path="~/project_app/${pname}/bin/"
-    rpasswd="shootao123"
+    rpasswd="xxxx"
 
     user="username"
     passwd="xxxxxxx"
@@ -112,7 +112,7 @@ function remote_start()
     remote_path="$2"
     server_ip="$3"
     pname="$4"
-    rpasswd="shootao123"
+    rpasswd="xxxx"
     remote_file="${remote_path}/${pname}/bin/lib*.so"
 
     user="username"

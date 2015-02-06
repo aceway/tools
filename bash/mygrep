@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+########################################################################
+#    File Name: mygrep.sh
+# 
+#       Author: Shootao Shanghai,Inc.
+#         Mail: aceway@shootao.com
+# Created Time: Thu 08 Jan 2015 04:01:45 AM EST
+#  Description: ...
+# 
+########################################################################
+
+word=$1
+
+cd `pwd`
+
+grep -n "${word}" * -r |grep -v -w tags|grep -v cmake|grep -v build|grep -v "\.svn"|grep -v "\.bak"|grep -v "\.log"|grep -v "\/log\/"|grep -v "\/documents\/"|grep -v "\/document\/"|grep -v "\/docs\/"|grep -v "\/doc\/"|grep -v "\/CMakeFiles\/"|grep --color=auto "${word}"
+

@@ -80,6 +80,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 2:
         pf = sys.argv[1]
         plist = load_prime_file(pf)
+        print "test prime count:", len(plist), ", max prime:", plist[-1]
         f, t = check_guess1(plist)
         print "guess1 false:", f
         print ""

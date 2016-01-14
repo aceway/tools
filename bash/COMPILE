@@ -1,0 +1,420 @@
+#!/usr/bin/env bash
+
+########################################################################
+#    File Name: COMPILE.sh
+# 
+#    Author: aceway
+#    Mail: aceway@qq.com
+#    Created Time: Sun 15 Feb 2015 01:27:44 PM CST
+#    Description: 自动编译当前路径所属的 项目代码 - 支持 cmake, make, protoc, tsconfig.json
+#               建议将本脚本放到 /usr/bin/下 或个人的 bin 下
+########################################################################
+
+#set -x
+set -u
+#set -e
+
+
+FG_GRAY="\033[0;37m"
+FG_RED="\033[0;31m"
+FG_GREEN="\033[0;32m"
+FG_BLUE="\033[0;34m"
+FG_YELLOW="\033[0;33m"
+FG_LIGHT_RED="\033[1;31m"
+FG_LIGHT_YELLOW="\033[1;33m"
+FG_LIGHT_GREEN="\033[1;32m"
+FG_LIGHT_BLUE="\033[0;34m"
+FG_LIGHT_GRAY="\033[1;37m"
+ 
+BG_GRAY="\e[47m"   # 将背景色设置为灰色 
+BG_BLACK="\e[40m"  # 将背景色设置为黑色
+BG_RED="\e[41m"    # 将背景色设置为红色 
+BG_GREEN="\e[42m"  # 将背景色设置为红色 
+BG_YELLOW="\e[43m" # 将背景色设置为淡红色
+BG_BLUE="\e[46m"   # 将背景色设置为淡蓝色
+BG_LIGHT_RED="\e[41m"       # 将背景色设置为红色
+BG_LIGHT_GREEN="\e[42m"     # 将背景色设置为绿色
+BG_LIGHT_BLUE="\e[44m"      # 将背景色设置为蓝色
+BG_LIGHT_PINK="\e[45m"      # 将背景色设置为紫色
+ 
+END="\033[0;00m"
+
+function shell_compile_code()
+{
+    cmpl_dir=`pwd`
+
+    force=""
+    mod_name=""
+    case $# in
+        0) :
+            force=""
+            mod_name=""
+            ;;
+        1) :
+            if [ "$1" = "force" ] || [ "$1" = "FORCE" ] || [ "$1" = "f" ] || [ "$1" = "F" ]; then
+                force="FORCE"
+                mod_name=""
+            else
+                force=""
+                mod_name=$1
+            fi
+            ;;
+        2) :
+            force=$1
+            mod_name=$2
+            ;;
+        *) :
+            force=$1
+            mod_name=$2
+            ;;
+    esac
+
+    if [ "${force}" = "FORCE" ]; then
+        echo -e "${FG_RED}RE${FG_YELLOW}COMPILE ${FG_GREEN}for compile.sh ${FG_RED}${mod_name}${FG_GREEN} at:${END} ${cmpl_dir}"
+        bash ./compile.sh "force"
+    else
+        echo -e "${FG_GREEN}COMPILE for compile.sh ${FG_RED}${mod_name}${FG_GREEN} at:${END} ${cmpl_dir}"
+        bash ./compile.sh
+    fi
+    ret=$?
+    if [ ${ret} -eq 0 ];then
+        echo -e "${FG_GREEN}COMPILE ${mod_name} FINISH${FG_RED} [OK] ${END}"
+    else
+        echo -e "${FG_YELLOW}COMPILE ${mod_name} FINISH${FG_RED} [FAILED] ${END}"
+    fi
+    return ${ret}
+}
+function cmake_src_code()
+{
+    cmpl_dir=`pwd`
+    subdir="./build"
+
+    force=""
+    mod_name=""
+    case $# in
+        0) :
+            force=""
+            mod_name=""
+            ;;
+        1) :
+            if [ "$1" = "force" ] || [ "$1" = "FORCE" ] || [ "$1" = "f" ] || [ "$1" = "F" ]; then
+                force="FORCE"
+                mod_name=""
+            else
+                force=""
+                mod_name=$1
+            fi
+            ;;
+        2) :
+            force=$1
+            mod_name=$2
+            ;;
+        *) :
+            force=$1
+            mod_name=$2
+            ;;
+    esac
+
+    if [ "${force}" = "FORCE" ]; then
+        echo -e "${FG_RED}RE${FG_YELLOW}COMPILE ${FG_GREEN}for cmake ${FG_RED}${mod_name}${FG_GREEN} at:${END} ${cmpl_dir}"
+        if [ -f "./build/Makefile" ]; then
+            cd ${subdir} 
+            make clean
+            cd ..
+        fi
+        rm -rf ${subdir}
+
+        if [ -d "${HOME}/.ccache" ]; then
+            rm -rf ${HOME}/.ccache/*
+        fi
+    else
+        echo -e "${FG_GREEN}COMPILE for cmake ${FG_RED}${mod_name}${FG_GREEN} at:${END} ${cmpl_dir}"
+    fi
+    mkdir -p ${subdir}
+    cd ${subdir}
+
+    cmake ${cmpl_dir} && make -j4
+    ret=$?
+    if [ ${ret} -eq 0 ]; then
+        echo -e "${FG_GREEN}COMPILE ${mod_name} FINISH${FG_RED} [OK] ${END}"
+    else
+        echo -e "${FG_YELLOW}COMPILE ${mod_name} FINISH${FG_RED} [FAILED] ${END}"
+    fi
+    return ${ret}
+}
+
+function make_src_code()
+{
+    cmpl_dir=`pwd`
+
+    force=""
+    mod_name=""
+    case $# in
+        0) :
+            force=""
+            mod_name=""
+            ;;
+        1) :
+            if [ "$1" = "force" ] || [ "$1" = "FORCE" ] || [ "$1" = "f" ] || [ "$1" = "F" ]; then
+                force="FORCE"
+                mod_name=""
+            else
+                force=""
+                mod_name=$1
+            fi
+            shift
+            ;;
+        2) :
+            force=$1
+            mod_name=$2
+            shift
+            shift
+            ;;
+        *) :
+            force=$1
+            mod_name=$2
+            shift
+            shift
+            ;;
+    esac
+
+    if [ "${force}" = "FORCE" ]; then
+        echo -e "${FG_RED}RE${FG_YELLOW}COMPILE ${FG_GREEN}for make ${FG_RED}${mod_name}${FG_GREEN} at:${END} ${cmpl_dir}"
+        make clean
+    else
+        echo -e "${FG_GREEN}COMPILE for make ${FG_RED}${mod_name}${FG_GREEN} at:${END} ${cmpl_dir}"
+    fi
+    make -j4
+    ret=$?
+    if [ ${ret} -eq 0 ]; then
+        echo -e "${FG_GREEN}COMPILE ${mod_name} FINISH${FG_RED} [OK] ${END}"
+    else
+        echo -e "${FG_YELLOW}COMPILE ${mod_name} FINISH${FG_RED} [FAILED] ${END}"
+    fi
+    return ${ret}
+}
+
+function compile_proto_file()
+{
+    cmpl_dir=`pwd`
+
+    force=""
+    mod_name=""
+    case $# in
+        0) :
+            force=""
+            mod_name=""
+            ;;
+        1) :
+            if [ "$1" = "force" ] || [ "$1" = "FORCE" ] || [ "$1" = "f" ] || [ "$1" = "F" ]; then
+                force="FORCE"
+                mod_name=""
+            else
+                force=""
+                mod_name=$1
+            fi
+            ;;
+        2) :
+            force=$1
+            mod_name=$2
+            ;;
+        *) :
+            force=$1
+            mod_name=$2
+            ;;
+    esac
+
+    if [ "${force}" = "FORCE" ]; then
+        echo -e "${FG_RED}RE${FG_YELLOW}COMPILE ${FG_GREEN}for protoc ${FG_RED}${mod_name}${FG_GREEN} at:${END} ${cmpl_dir}"
+        bash ./Makeproto f
+    else
+        echo -e "${FG_GREEN}COMPILE for protoc ${FG_RED}${mod_name}${FG_GREEN} at:${END} ${cmpl_dir}"
+        bash ./Makeproto
+    fi
+    ret=$?
+    if [ ${ret} -eq 0 ];then
+        echo -e "${FG_GREEN}COMPILE ${mod_name} FINISH${FG_RED} [OK] ${END}"
+    else
+        echo -e "${FG_YELLOW}COMPILE ${mod_name} FINISH${FG_RED} [FAILED] ${END}"
+    fi
+    return ${ret}
+}
+
+function tsc_src_file()
+{
+    cmpl_dir=`pwd`
+
+    force=""
+    mod_name=""
+    case $# in
+        0) :
+            force=""
+            mod_name=""
+            ;;
+        1) :
+            if [ "$1" = "force" ] || [ "$1" = "FORCE" ] || [ "$1" = "f" ] || [ "$1" = "F" ]; then
+                force="FORCE"
+                mod_name=""
+            else
+                force=""
+                mod_name=$1
+            fi
+            ;;
+        2) :
+            force=$1
+            mod_name=$2
+            ;;
+        *) :
+            force=$1
+            mod_name=$2
+            ;;
+    esac
+
+    if [ "${force}" = "FORCE" ]; then
+        echo -e "${FG_RED}RE${FG_YELLOW}COMPILE ${FG_GREEN}for tsconfig.json ${FG_RED}${mod_name}${FG_GREEN} at:${END} ${cmpl_dir}"
+        tsc
+    else
+        echo -e "${FG_GREEN}COMPILE for tsconfig.json ${FG_RED}${mod_name}${FG_GREEN} at:${END} ${cmpl_dir}"
+        tsc
+    fi
+    ret=$?
+    if [ ${ret} -eq 0 ];then
+        echo -e "${FG_GREEN}COMPILE ${mod_name} FINISH${FG_RED} [OK] ${END}"
+    else
+        echo -e "${FG_YELLOW}COMPILE ${mod_name} FINISH${FG_RED} [FAILED] ${END}"
+    fi
+    return ${ret}
+}
+
+#
+#功能说明:
+#   将当前目录切换到指定目录，并在指定目录查找编译配置文件，如果失败则以递归方式将上级目录改变为当前目录进行查找, 直到遇到根目录或软连接目录
+#
+#参数说明:
+#   $1, 指定开始查找编译配置文件的目录
+#
+#返回值说明:
+#   0, 未找到配置文件
+#   1, 找到 CMakeLists.txt 配置文件
+#   2, 找到 Makefile 配置文件
+#   3, 找到 Makeproto 配置文件
+#
+#
+function find_compile_up_dir()
+{
+    if [ $# -eq 1 ] && [ -d "$1" ] && [ "$1" != "/" ] && [ ! -L "$1" ]; then  # 不支持将编译文件放在系统根目录来编译
+        local the_dir=$1
+        cd ${the_dir}
+        
+        if [ -f "./compile.sh" ]; then
+            return 1
+        elif [ -f "./CMakeLists.txt" ]; then
+            return 2
+        elif [ -f "./Makefile" ]; then
+            return 3
+        elif [ -f "./Makeproto" ]; then
+            return 4
+        elif [ -f "./tsconfig.json" ]; then
+            return 5
+        else
+            local cmpl_dir=`dirname ${the_dir}`
+            find_compile_up_dir ${cmpl_dir}
+            return $?
+        fi
+    elif [ $# -eq 1 ] && [ -L "$1" ]; then
+        local the_dir=$1
+        echo -e "${FG_RED}查找编译配置文件遇到目录是软连接，退出:${FG_YELLOW}${the_dir}${END}"
+        return 0 
+    elif [ $# -eq 1 ] && [ "$1" = "/" ]; then
+        local the_dir=$1
+        echo -e "${FG_RED}已经到根目录仍未发现任何编译支持的配置文件:${FG_YELLOW}${END}"
+        return 0
+    else
+        echo -e "\n${BG_RED}参数错误:${FUNCNAME} $@ ${END}"
+        echo -e "${FG_RED}Usage:${END}\n\t${FUNCNAME} path"
+        return 0
+    fi
+}
+
+
+function try_switch_from_build_mine2src()
+{
+    local modules=$@
+    local curdir=`pwd`
+    local curname=`basename ${curdir}`
+    #echo -e "\tnow:" $curname
+
+    if [ "${curname}" != "/" ]; then
+        local got=""
+        for d in ${modules}; do
+            #echo ${d}
+            if [ ${d} = ${curname} ] ;then
+                if [ -d ../../build_mine ] ;then
+                    got="yes"
+                    break
+                elif [ -d ../../build ] ;then
+                    got="yes"
+                    break
+                fi
+            fi
+        done
+
+        if [ ! -z ${got} ] && [ -d ../../${curname}/trunk/ ];then
+            cd ../../${curname}/trunk/
+            return 1
+        elif [ ! -z ${got} ] && [ -d ../../${curname}/branches/ ];then
+            cd ../../${curname}/branches/
+            return 1
+        elif [ ! -z ${got} ] && [ -d ../../${curname}/tags/ ];then
+            cd ../../${curname}/tags/
+            return 1
+        else
+            cd ..
+            try_switch_from_build_mine2src ${modules}
+            return $?
+        fi
+    else
+        return 0 
+    fi
+}
+
+# scirpt entry
+start_time=`date +%s`
+
+# 向上递归目录查找编译配置文件,  向上搜索优先于 向下探测 和 环境配置(如果已经在模块目录下则不用去探测和环境中找)
+OLD_DIR=`pwd`
+find_compile_up_dir ${OLD_DIR}
+ret=$?
+
+#根据前面的查找结果编译模块
+case ${ret} in
+    0) echo -e "\n${FG_RED}当前目录是不支持的编译源码目录:${FG_YELLOW}${OLD_DIR}${END}"
+        ret=1
+        ;;
+    1) shell_compile_code $@
+        ret=$?
+        ;;
+    2) cmake_src_code $@
+        ret=$?
+        ;;
+    3) make_src_code $@
+        ret=$?
+        ;;
+    4) compile_proto_file $@
+        ret=$?
+        ;;
+    5) tsc_src_file $@
+        ret=$?
+        ;;
+    *) echo "\nfind_compile_dir 返回未知错误码:${FG_RED}${ret}${END}"
+        ret=1
+        ;;
+esac
+
+cd ${OLD_DIR}
+
+end_time=`date +%s`
+cost_time=`expr $end_time - $start_time`
+echo -e ${FG_YELLOW} "编译用时:${FG_RED}[${cost_time}]${FG_YELLOW}秒${END}\n\n"
+
+exit ${ret} 

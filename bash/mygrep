@@ -3,15 +3,22 @@
 #    File Name: mygrep.sh
 # 
 #       Author: Shootao Shanghai,Inc.
-#         Mail: aceway@shootao.com
+#         Mail: aceway@qq.com
 # Created Time: Thu 08 Jan 2015 04:01:45 AM EST
 #  Description: ...
 # 
 ########################################################################
 
-word=$1
-
-cd `pwd`
-
-grep -n "${word}" * -r |grep -v -w tags|grep -v cmake|grep -v build|grep -v "\.svn"|grep -v "\.bak"|grep -v "\.log"|grep -v "\/log\/"|grep -v "\/documents\/"|grep -v "\/document\/"|grep -v "\/docs\/"|grep -v "\/doc\/"|grep -v "\/CMakeFiles\/"|grep --color=auto "${word}"
-
+if [ $# -eq 1 ];then
+    word=$1
+    cd `pwd`
+    grep -rn --color=auto "${word}" * -R --exclude-dir={.git,.svn,bin,log,doc,docs,document,documents,CMakeFiles,build,cmake,tags} --exclude={TAGS,tags,*.pyc,*.pb,*.bak,*.log,*pb2.py,*.pb.h,*.pb.cc,*lua.cc}
+elif [ $# -eq 2 ] && [ "$1" = "-w" ] ;then
+    word=$2
+    cd `pwd`
+    grep -rnw --color=auto "${word}" * -R --exclude-dir={.git,.svn,bin,log,doc,docs,document,documents,CMakeFiles,build,cmake,tags} --exclude={TAGS,tags,*.pyc,*.pb,*.bak,*.log,*pb2.py,*.pb.h,*.pb.cc,*lua.cc}
+else
+    echo -e "Usage:" 
+    echo -e "\tmygrep  string" 
+    echo -e "\tmygrep -w word" 
+fi

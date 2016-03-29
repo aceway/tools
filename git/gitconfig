@@ -1,34 +1,40 @@
 [user]  
     name = aceway  
     email = aceway@qq.com  
-[branch]  
-    autosetuprebase = always  
 [push]  
     default = tracking  
 [core]  
     editor = vim  
-    pager  = less
 [color]  
-    diff = auto
     status = auto  
     branch = auto  
-    interactive = auto
-    pager = true  
+    diff = auto  
     ui = true  
-[color "branch"]  
-    current = yellow reverse  
-    local = yellow  
-    remote = green  
-[color "diff"]  
-    meta = yellow bold  
-    frag = magenta bold  
-    old = red bold  
-    new = green bold  
+    pager = true  
 [color "status"]  
     added = yellow  
     changed = green  
     untracked = cyan  
+[color "branch"]
+    autosetuprebase = always  
+    current = yellow reverse
+    local = yellow
+    remote = green
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+        new = green bold
 [alias]  
-    lg = log --color --graph --pretty
-    hist = log --graph --online --decorate
-    st = status
+    pl = pull
+    ps = push
+    cm = commit
+    co = checkout
+    ls = ls-files
+    lf = ls-files
+    br = branch
+    hist = log --graph --decorate
+    ll = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit -- 
+    lg = log --graph --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative --show-signature
+[mergetool]
+	keepBackup = false

@@ -64,8 +64,8 @@ if !exists("g:re")
 endif
 
 "let g:Author="aceway"
-"let g:Email="aceway@shootao.com"
-"let g:Company="TAOMEE"
+"let g:Email="aceway@qq.com"
+"let g:Company="h53d"
 "
 if !exists("g:Author")
     let g:Author= ''    "region start

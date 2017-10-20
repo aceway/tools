@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+########################################################################
+#    File Name: mygrep.sh
+# 
+#       Author: Shootao Shanghai,Inc.
+#         Mail: aceway@shootao.com
+# Created Time: Thu 08 Jan 2015 04:01:45 AM EST
+#  Description: ...
+# 
+########################################################################
+if [ $# -ge 2 ];then
+    panel=$1
+    shift
+    prm=""
+    for arg in $@  
+    do  
+        prm="${prm} SPace ${arg}"
+    done
+    prm="${prm}"
+    tmux send-keys -t aw:splan.${panel} ${prm}
+elif [ $# -eq 1 ];then
+    tmux send-keys -t aw:splan.${panel} KPEnter
+else
+    echo "User age: ${0} panel [option]"
+fi
+

@@ -1,0 +1,6 @@
+1, git remote add upstream http://xxx.xxx.xxx/xxxx.git
+2, git fetch upstream
+3, git rebase upstream/master
+4, 再: git pull 遇到报错: "fatal: refusing to merge unrelated histories"
+   用: git pull origin master --allow-unrelated-histories
+5，git push

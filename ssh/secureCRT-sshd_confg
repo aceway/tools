@@ -1,0 +1,9 @@
+Key exchange failed.No compatible key-exchange method:
+ssh server too hight, and secureCRT version lower than 7.1.1
+add bellow test into server /etc/ssh/sshd_config
+
+Ciphers aes128-ctr,aes192-ctr,aes256-ctr
+KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1
+
+
+then reload config:  sudo service sshd reload
